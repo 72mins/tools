@@ -1,9 +1,36 @@
 #!/bin/bash
 
-gitlab_url=""
-private_token=""
-user_id=""
-project_ids=("" "")
+################################################################################
+# Script: GitLab Auto-Merge
+#
+# Description: This script automatically merges all Gitlab merge requests
+# assigned to a specific user across multiple projects.
+#
+# Configuration:
+#  - GITLAB_URL: The URL of your GitLab instance (e.g., "https://gitlab.com").
+#       Set as an environment variable.
+#  - GITLAB_TOKEN: Your GitLab private token with 'api' scope. Set as an
+#       environment variable.
+#  - GITLAB_USER_ID: Your GitLab user ID. Set as an environment variable.
+#  - GITLAB_PROJECT_IDS: A space-separated list of GitLab project IDs to
+#       process. Set as an environment variable.
+#
+# Dependencies:
+#  - curl: For making HTTP requests to the GitLab API.
+#  - jq: For parsing JSON responses from the GitLab API.
+#
+# Version:  1.0
+################################################################################
+
+gitlab_url="${GITLAB_URL}"
+private_token="${GITLAB_TOKEN}"
+user_id="${GITLAB_USER_ID}"
+project_ids=(${GITLAB_PROJECT_IDS})
+
+if [ -z "$gitlab_url" ] || [ -z "$private_token" ] || [ -z "$user_id" ] || [ -z "$GITLAB_PROJECT_IDS" ]; then
+    echo "Error: Missing required environment variables (GITLAB_URL, GITLAB_TOKEN, GITLAB_USER_ID, GITLAB_PROJECT_IDS)."
+    exit 1
+fi
 
 merge_request() {
     local project_id="$1"
