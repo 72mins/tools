@@ -1,6 +1,16 @@
 #!/bin/bash
 
-# Script to set up a development environment for the Sentinel project in Ghostty
+################################################################################
+# Script: Sentinel Environment Setup
+#
+# Description: This script sets up a development environment for the
+# Sentinel project
+#
+# WARNING: This script only works with Ghostty and MacOS since it relies
+# on AppleScript to control the terminal.
+#
+# Version:  1.0
+################################################################################
 
 new_tab='
 tell application "Ghostty"
