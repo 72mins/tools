@@ -19,7 +19,7 @@
 #  - curl: For making HTTP requests to the GitLab API.
 #  - jq: For parsing JSON responses from the GitLab API.
 #
-# Version:  1.0
+# Version:  1.0.1
 ################################################################################
 
 gitlab_url="${GITLAB_URL}"

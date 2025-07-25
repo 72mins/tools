@@ -1,10 +1,10 @@
 #!/bin/bash
 
 ################################################################################
-# Script: Sentinel Environment Setup
+# Script: INP Environment Setup
 #
 # Description: This script sets up a development environment for the
-# Sentinel project
+# INP project
 #
 # WARNING: This script only works with Ghostty and MacOS since it relies
 # on AppleScript to control the terminal.
@@ -14,45 +14,34 @@
 
 # Configuration variables
 TERMINAL_APP="Ghostty"
-PROJECT_ROOT="$HOME/DevProjects/sentinel"
-BACKEND_PATH="$PROJECT_ROOT/backend"
-WEB_PATH="$PROJECT_ROOT/web"
-VENV_PATH=".venv/bin/activate"
+BACKEND_PROJECT_PATH="$HOME/DevProjects/itcs-inp-b"
+FRONTEND_PROJECT_PATH="$HOME/DevProjects/itcs-inp-f"
+VENV_PATH="venv/bin/activate"
 EDITOR_CMD="nvim ."
-BACKEND_RUN_CMD="uvi project"
-WEB_RUN_CMD="bun run dev"
+BACKEND_RUN_CMD="rpy"
+FRONTEND_RUN_CMD="npm start"
 EDITOR_QUIT_KEY="q"
 
 validate_environment() {
     echo "Validating environment..."
 
-    if [ ! -d "$PROJECT_ROOT" ]; then
-        echo "Error: Project root directory not found: $PROJECT_ROOT"
+    if [ ! -d "$BACKEND_PROJECT_PATH" ]; then
+        echo "Error: Backend project directory not found: $BACKEND_PROJECT_PATH"
         exit 1
     fi
 
-    if [ ! -d "$BACKEND_PATH" ]; then
-        echo "Error: Backend directory not found: $BACKEND_PATH"
+    if [ ! -d "$FRONTEND_PROJECT_PATH" ]; then
+        echo "Error: Frontend project directory not found: $FRONTEND_PROJECT_PATH"
         exit 1
     fi
 
-    if [ ! -d "$WEB_PATH" ]; then
-        echo "Error: Web directory not found: $WEB_PATH"
+    if [ ! -f "$BACKEND_PROJECT_PATH/$VENV_PATH" ]; then
+        echo "Error: Virtual environment not found: $BACKEND_PROJECT_PATH/$VENV_PATH"
         exit 1
     fi
 
-    if [ ! -f "$BACKEND_PATH/$VENV_PATH" ]; then
-        echo "Error: Virtual environment not found: $BACKEND_PATH/$VENV_PATH"
-        exit 1
-    fi
-
-    if [ ! -f "$WEB_PATH/package.json" ]; then
-        echo "Error: Web package.json not found in: $WEB_PATH"
-        exit 1
-    fi
-
-    if ! command -v bun &>/dev/null; then
-        echo "Error: bun command not found. Please install bun."
+    if [ ! -f "$FRONTEND_PROJECT_PATH/package.json" ]; then
+        echo "Error: Frontend package.json not found in: $FRONTEND_PROJECT_PATH"
         exit 1
     fi
 
@@ -93,24 +82,30 @@ validate_environment
 
 create_new_tab
 create_new_tab
+create_new_tab
 
-# Setup first tab: Project root with git pull and editor
-execute_in_tab "1" "$PROJECT_ROOT" "
-    keystroke \"source backend/$VENV_PATH\" & return
-    keystroke \"git pull\" & return
+# Setup first tab: Backend with editor
+execute_in_tab "1" "$BACKEND_PROJECT_PATH" "
+    keystroke \"source $VENV_PATH\" & return
     keystroke \"$EDITOR_CMD\" & return
     keystroke \"$EDITOR_QUIT_KEY\" using {option down}
 "
 
 # Setup second tab: Backend with development server
-execute_in_tab "2" "$BACKEND_PATH" "
+execute_in_tab "2" "$BACKEND_PROJECT_PATH" "
     keystroke \"source $VENV_PATH\" & return
     keystroke \"$BACKEND_RUN_CMD\" & return
 "
 
-# Setup third tab: Web with development server
-execute_in_tab "3" "$WEB_PATH" "
-    keystroke \"$WEB_RUN_CMD\" & return
+# Setup third tab: Frontend with editor
+execute_in_tab "3" "$FRONTEND_PROJECT_PATH" "
+    keystroke \"$EDITOR_CMD\" & return
+    keystroke \"$EDITOR_QUIT_KEY\" using {option down}
+"
+
+# Setup fourth tab: Frontend with development server
+execute_in_tab "4" "$FRONTEND_PROJECT_PATH" "
+    keystroke \"$FRONTEND_RUN_CMD\" & return
 "
 
 exit 0
